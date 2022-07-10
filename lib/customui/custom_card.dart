@@ -1,40 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:whatsappclone/model/chat_model.dart';
+import 'package:whatsappclone/screens/individualpage/individual_page.dart';
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({ Key? key }) : super(key: key);
+  CustomCard(this.chat, {Key? key}) : super(key: key);
+  ChatModel chat;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => IndividualPage(chat: chat)));
+      },
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.blueGrey,
-          child:SvgPicture.asset("assets/groups.svg",color: Colors.white,
-          height: 37,
-          width: 37,),
+          child: SvgPicture.asset(
+            "assets/" + chat.icon,
+            color: Colors.white,
+            height: 37,
+            width: 37,
+          ),
           radius: 27,
         ),
-        trailing: Text("18:04",style: TextStyle(
-          color: Color.fromARGB(255, 120, 119, 119),
-        ),),
-        title: Text("9554567836",style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),),
+        trailing: Text(
+          chat.time,
+          style: TextStyle(
+            color: Color.fromARGB(255, 120, 119, 119),
+          ),
+        ),
+        title: Text(
+          chat.name,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         subtitle: Row(
           children: [
             Icon(Icons.done_all),
             SizedBox(
               width: 3,
             ),
-           Expanded(child:  Text(
-              "Hey!!I am not a developer.I am a student of rkgit gzb",
+            Expanded(
+                child: Text(
+              chat.currentMessage,
               maxLines: 1,
               overflow: TextOverflow.clip,
-            )
-            )
+            ))
           ],
         ),
       ),
