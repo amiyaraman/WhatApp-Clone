@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whatsappclone/customui/contact_card.dart';
+import 'package:whatsappclone/screens/create_group.dart';
 
 import '../customui/button_card.dart';
 import '../model/chat_model.dart';
@@ -79,13 +80,13 @@ class _SelectContactState extends State<SelectContact> {
         ],
       ),
       body: ListView.builder(
-        itemCount: 7,
+        itemCount: contacts.length+2,
         itemBuilder: (context,index){
                         if (index == 0) {
               return InkWell(
                 onTap: () {
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (builder) => CreateGroup()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (builder) => CreateGroup()));
                 },
                 child: ButtonCard(
                   icon: Icons.group,
