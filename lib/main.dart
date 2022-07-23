@@ -1,8 +1,12 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:whatsappclone/Screens/home_screen.dart';
+import 'package:whatsappclone/screens/camera_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras=await availableCameras();
   runApp(const MyApp());
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:whatsappclone/page/camera_page.dart';
 import 'package:whatsappclone/page/chat_page.dart';
 
 class HomeScrenn extends StatefulWidget {
@@ -15,7 +16,7 @@ class _HomeScrennState extends State<HomeScrenn>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 1);
   }
 
   @override
@@ -77,7 +78,7 @@ class _HomeScrennState extends State<HomeScrenn>
       body: TabBarView(
         controller: _tabController,
         children: [
-          Text("Camera"),
+          CameraPage(),
           ChatPage(),
           Text("Status"),
           Text("Calls"),
