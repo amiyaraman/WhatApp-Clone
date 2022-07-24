@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsappclone/page/camera_view_page.dart';
+import 'package:whatsappclone/page/video_view.dart';
 
 late List<CameraDescription> cameras;
 
@@ -94,12 +97,12 @@ late CameraController _cameraController;
                           setState(() {
                             isRecoring = false;
                           });
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (builder) => VideoViewPage(
-                          //               path: videopath.path,
-                          //             )));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => VideoViewPage(
+                                        path: videopath.path,
+                                      )));
                         },
                         onTap: () {
                           if (!isRecoring) takePhoto(context);
@@ -128,7 +131,7 @@ late CameraController _cameraController;
                           onPressed: () async {
                             setState(() {
                               iscamerafront = !iscamerafront;
-                              transform = transform +  1;
+                              transform = transform +  pi;
                             });
                             int cameraPos = iscamerafront ? 0 : 1;
                             _cameraController = CameraController(
