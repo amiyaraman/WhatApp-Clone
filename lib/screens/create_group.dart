@@ -15,15 +15,53 @@ class CreateGroup extends StatefulWidget {
 class _CreateGroupState extends State<CreateGroup> {
    List<ChatModel> contacts = [
     ChatModel(
-        "person1", "currentMessage part 1", "person.svg", false, "4:00", false),
+      name: "Dev Stack",
+      isGroup: false,
+      currentMessage: "Hi Everyone",
+      time: "4:00",
+      icon: "person.svg",
+      id: 1,
+      status: "yo1"
+    ),
     ChatModel(
-        "person2", "currentMessage part 2", "person.svg", false, "3:00", true),
+      name: "Kishor",
+      isGroup: false,
+      currentMessage: "Hi Kishor",
+      time: "13:00",
+      icon: "person.svg",
+      id: 2,
+      status: "yo2"
+    ),
+
     ChatModel(
-        "person3", "currentMessage part 3", "person.svg", false, "7:00", false),
+      name: "Collins",
+      isGroup: false,
+      currentMessage: "Hi Dev Stack",
+      time: "8:00",
+      icon: "person.svg",
+      id: 3,
+      status: "yo3"
+    ),
+
     ChatModel(
-        "nperson4", "currentMessage part 4", "person.svg", false, "9:00", true),
-    ChatModel(
-        "person5", "currentMessage part 5", "groups.svg", true, "19:00", false),
+      name: "Balram Rathore",
+      isGroup: false,
+      currentMessage: "Hi Dev Stack",
+      time: "2:00",
+      icon: "person.svg",
+      id: 4,
+      status: "yo4"
+    ),
+
+    // ChatModel(
+    //   name: "NodeJs Group",
+    //   isGroup: true,
+    //   currentMessage: "New NodejS Post",
+    //   time: "2:00",
+    //   icon: "group.svg",
+    // status: "yo4"
+    
+    // ),
   ];
   List<ChatModel> groupmember = [];
 

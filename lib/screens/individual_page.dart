@@ -6,6 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsappclone/customui/own_message_card.dart';
 import 'package:whatsappclone/customui/reply_card.dart';
 import 'package:whatsappclone/model/chat_model.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 
 class IndividualPage extends StatefulWidget {
   IndividualPage({required this.chat, Key? key}) : super(key: key);
@@ -18,11 +20,15 @@ class IndividualPage extends StatefulWidget {
 class _IndividualPageState extends State<IndividualPage> {
   bool showEmoji = false;
   FocusNode focusNode = FocusNode();
+  late IO.Socket socket;
+  bool sendbutton = false;
+  
   TextEditingController _controller = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    connect();
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         setState(() {
@@ -30,6 +36,30 @@ class _IndividualPageState extends State<IndividualPage> {
         });
       }
     });
+  }
+  void connect()
+  {
+    print("here one part");
+    socket = IO.io("http://192.168.0.104:5000",<String,dynamic>{
+      "transports":["websocket"],
+      "autoConnect":false
+    });
+    socket.connect();
+    socket.onConnect((data) {
+      socket.emit("/test","hello world");
+      return print("done");
+    }); 
+    print(socket.connected);
+
+
+
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    //socket.disconnect();
+   // socket.dispose();
   }
 
   @override
@@ -197,6 +227,21 @@ class _IndividualPageState extends State<IndividualPage> {
                               keyboardType: TextInputType.multiline,
                               textAlignVertical: TextAlignVertical.center,
                               maxLines: 5,
+                              onChanged: (value){
+                                if(value.length>0){
+                                    setState(() {
+                                      sendbutton=true;
+                                    });
+
+                                }
+                                else{
+                                  setState(() {
+                                    sendbutton=false;
+                                  });
+                                }
+                              
+
+                              },
                               minLines: 1,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
@@ -244,6 +289,7 @@ class _IndividualPageState extends State<IndividualPage> {
                               radius: 25,
                               child: IconButton(
                                   icon: Icon(
+                                    sendbutton?Icons.send:
                                     Icons.mic,
                                     color: Colors.white,
                                   ),

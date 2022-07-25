@@ -14,11 +14,51 @@ class SelectContact extends StatefulWidget {
 
 class _SelectContactState extends State<SelectContact> {
   List<ChatModel> contacts = [
-      ChatModel("person1", "currentMessage part 1", "person.svg", false, "4:00",false),
-    ChatModel("person2", "currentMessage part 2", "person.svg", false, "3:00",true),
-    ChatModel("person3", "currentMessage part 3", "person.svg", false, "7:00",false),
-    ChatModel("nperson4", "currentMessage part 4", "person.svg", false, "9:00",true),
-    ChatModel("person5", "currentMessage part 5", "groups.svg", true, "19:00",false),
+   ChatModel(
+        name: "Dev Stack",
+        isGroup: false,
+        currentMessage: "Hi Everyone",
+        time: "4:00",
+        icon: "person.svg",
+        id: 1,
+        status: "yo1"),
+    ChatModel(
+        name: "Kishor",
+        isGroup: false,
+        currentMessage: "Hi Kishor",
+        time: "13:00",
+        icon: "person.svg",
+        id: 2,
+        status: "yo2"),
+
+    ChatModel(
+        name: "Collins",
+        isGroup: false,
+        currentMessage: "Hi Dev Stack",
+        time: "8:00",
+        icon: "person.svg",
+        id: 3,
+        status: "yo3"),
+
+    ChatModel(
+        name: "Balram Rathore",
+        isGroup: false,
+        currentMessage: "Hi Dev Stack",
+        time: "2:00",
+        icon: "person.svg",
+        id: 4,
+        status: "yo4"),
+
+    ChatModel(
+      name: "NodeJs Group",
+      isGroup: true,
+      currentMessage: "New NodejS Post",
+      time: "2:00",
+      icon: "group.svg",
+    status: "yo4",
+    id: 5,
+
+    ),
   ];
 
   @override

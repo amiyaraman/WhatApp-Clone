@@ -8,9 +8,16 @@ String currentMessage;
  late String status;
   late bool select = false;
   late int id;
-  ChatModel(this.name,this.currentMessage,this.icon,this.isGroup,this.time,this.select){
-    this.status="THIS IS THE SAME STATUS FOR EVERY CONTACT";
-    this.id=2313;
+  ChatModel({
+    required this.name,
+    required this.icon,
+    required this.isGroup,
+    required this.time,
+    required this.currentMessage,
+    required this.status,
+    this.select = false,
+    required this.id,
+  }){
 
 
   }

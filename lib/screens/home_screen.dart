@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:whatsappclone/model/chat_model.dart';
 import 'package:whatsappclone/page/camera_page.dart';
 import 'package:whatsappclone/page/chat_page.dart';
 
 class HomeScrenn extends StatefulWidget {
-  const HomeScrenn({Key? key}) : super(key: key);
+  const HomeScrenn({Key? key, required this.chatmodels}) : super(key: key);
+  final List<ChatModel> chatmodels;
 
   @override
   State<HomeScrenn> createState() => _HomeScrennState();
@@ -79,7 +81,9 @@ class _HomeScrennState extends State<HomeScrenn>
         controller: _tabController,
         children: [
           CameraPage(),
-          ChatPage(),
+          ChatPage(
+            chatmodels: widget.chatmodels,
+          ),
           Text("Status"),
           Text("Calls"),
         ],

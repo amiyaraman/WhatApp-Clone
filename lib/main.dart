@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:whatsappclone/Screens/home_screen.dart';
 import 'package:whatsappclone/screens/camera_screen.dart';
+import 'package:whatsappclone/screens/login_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
        
       ),
       debugShowCheckedModeBanner: false,
-    home: HomeScrenn()
+    home: LoginScreen()
     
     );
   }
