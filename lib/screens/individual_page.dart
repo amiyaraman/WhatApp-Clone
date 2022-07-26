@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -7,11 +8,14 @@ import 'package:whatsappclone/customui/own_message_card.dart';
 import 'package:whatsappclone/customui/reply_card.dart';
 import 'package:whatsappclone/model/chat_model.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
+import 'package:whatsappclone/model/message_model.dart';
 
 class IndividualPage extends StatefulWidget {
-  IndividualPage({required this.chat, Key? key}) : super(key: key);
+  IndividualPage({required this.chat, Key? key, required this.sourchat})
+      : super(key: key);
   ChatModel chat;
+  ChatModel sourchat;
+ 
 
   @override
   State<IndividualPage> createState() => _IndividualPageState();
@@ -22,13 +26,16 @@ class _IndividualPageState extends State<IndividualPage> {
   FocusNode focusNode = FocusNode();
   late IO.Socket socket;
   bool sendbutton = false;
+  List<MessageModel> messages = [];
   
+
+  ScrollController _scrollController = ScrollController();
   TextEditingController _controller = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    connect();
+   
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         setState(() {
@@ -36,43 +43,74 @@ class _IndividualPageState extends State<IndividualPage> {
         });
       }
     });
+     connect();
   }
-  void connect()
-  {
-    print("here one part");
-    socket = IO.io("http://192.168.0.104:5000",<String,dynamic>{
-      "transports":["websocket"],
-      "autoConnect":false
+
+  void connect() {
+  //  print("here one part");
+    socket = IO.io("http://192.168.0.104:5000", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false
     });
-    socket.connect();
-    socket.onConnect((data) {
-      socket.emit("/test","hello world");
-      return print("done");
-    }); 
-    print(socket.connected);
+    if (!socket.connected) {
+      socket.connect();
+      socket.onConnect((data) {
+        socket.emit("signin", widget.sourchat.id);
+      });
+    } else if (socket.connected) {
+      //do someting if the connection is already established
+       
+    }
+      socket.on("message", (msg) {
+        print(msg);
+        setMessage("destination", msg["message"]);
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 500), curve: Curves.easeOut);
 
+      });
 
-
+    //print(socket.connected);
   }
+  void sendMessage(String message , int sourceId , int targetId){
+       setMessage("source", message);
+    socket.emit("message",{
+      "message":message,
+      "sourceId":sourceId,
+      "targetId":targetId
+    });
+  }
+    void setMessage(String type, String message) {
+      
+    MessageModel messageModel = MessageModel(
+        type: type,
+        message: message,
+        time: DateTime.now().toString().substring(10, 16));
+    print(messages);
+
+    setState(() {
+      messages.add(messageModel);
+    });
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     //socket.disconnect();
-   // socket.dispose();
+    // socket.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Image.network("https://res.cloudinary.com/practicaldev/image/fetch/s--WAKqnINn--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://thepracticaldev.s3.amazonaws.com/i/tw0nawnvo0zpgm5nx4fp.png",
+   // connect();
+    return Stack(children: [
+      Image.network(
+        "https://res.cloudinary.com/practicaldev/image/fetch/s--WAKqnINn--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://thepracticaldev.s3.amazonaws.com/i/tw0nawnvo0zpgm5nx4fp.png",
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         fit: BoxFit.cover,
-         
-        ),
-        Scaffold(
+      ),
+      Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           titleSpacing: 0,
@@ -173,141 +211,148 @@ class _IndividualPageState extends State<IndividualPage> {
               }
               return Future.value(false);
             },
-            child: Stack(
+            child: Column(
               children: [
-                Container(
-                  height: MediaQuery.of(context).size.height-140,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      OwnMessageCard(message: "Hey there how are you", time: "12:20"),
-                      ReplyCard(message: "hey", time: "23:12"),
-                      OwnMessageCard(
-                          message: "Hey there how are geg e you", time: "12:20"),
-                      ReplyCard(message: "hey", time: "23:12"),
-                      OwnMessageCard(
-                          message: "Hey there howsf wef w gae gae ge gerrg a ga gge g are you", time: "12:20"),
-                      ReplyCard(message: "hey", time: "23:12"),
-                      OwnMessageCard(
-                          message: "Hey there how are you", time: "12:20"),
-                      ReplyCard(message: "gadg adg adg ag sa ag hey", time: "23:12"),
-                      OwnMessageCard(
-                          message: "Hey there how a ga gas gare you", time: "12:20"),
-                      ReplyCard(message: "h gsa gasddg ey", time: "23:12"),
-                      OwnMessageCard(
-                          message: "Hey there how are you", time: "12:20"),
-                      ReplyCard(message: "hey", time: "23:12"),
-                      OwnMessageCard(
-                          message: "Hey there how are you", time: "12:20"),
-                      ReplyCard(message: "hey", time: "23:12"),
-                    ],
+                Expanded(
+                 // height: MediaQuery.of(context).size.height - 140,
+                  child: ListView.builder(
+                  
+                      shrinkWrap: true,
+                      controller: _scrollController,
+                      itemCount:  messages.length + 1 ,
+                      itemBuilder: (context, index) {
+                        if (index == messages.length) {
+                          return Container(
+                            height: 70,
+                          );
+                        }
+                        if (messages[index].type == "source") {
+                          return OwnMessageCard(
+                            message: messages[index].message,
+                            time: messages[index].time,
+                          );
+                        } else {
+                          return ReplyCard(
+                            message: messages[index].message,
+                            time: messages[index].time,
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
-
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child:
-                      Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width - 55,
-                          child: Card(
-                            margin: EdgeInsets.only(
-                              left: 2,
-                              right: 2,
-                              bottom: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: TextFormField(
-                              controller: _controller,
-                              focusNode: focusNode,
-                              keyboardType: TextInputType.multiline,
-                              textAlignVertical: TextAlignVertical.center,
-                              maxLines: 5,
-                              onChanged: (value){
-                                if(value.length>0){
-                                    setState(() {
-                                      sendbutton=true;
-                                    });
-
-                                }
-                                else{
-                                  setState(() {
-                                    sendbutton=false;
-                                  });
-                                }
-                              
-
-                              },
-                              minLines: 1,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Type a message",
-                                  prefixIcon: IconButton(
-                                    icon: Icon(Icons.emoji_emotions),
-                                    onPressed: () {
-                                      setState(() {
-                                        focusNode.unfocus();
-                                        focusNode.canRequestFocus = false;
-                                        showEmoji = !showEmoji;
-                                      });
+                  child: Container(
+                    height: 70,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width - 55,
+                                child: Card(
+                                  margin: EdgeInsets.only(
+                                    left: 2,
+                                    right: 2,
+                                    bottom: 8,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  child: TextFormField(
+                                    controller: _controller,
+                                    focusNode: focusNode,
+                                    keyboardType: TextInputType.multiline,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    maxLines: 5,
+                                    onChanged: (value) {
+                                      if (value.length > 0) {
+                                        setState(() {
+                                          sendbutton = true;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          sendbutton = false;
+                                        });
+                                      }
                                     },
-                                  ),
-                                  suffixIcon: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
+                                    minLines: 1,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Type a message",
+                                        prefixIcon: IconButton(
+                                          icon: Icon(Icons.emoji_emotions),
                                           onPressed: () {
-                                            showModalBottomSheet(
-                                              backgroundColor:
-                                                    Colors.transparent,
-                                              context: context, builder: (builder)=>
-                                            bottomSheet()
-                                            );
+                                            setState(() {
+                                              focusNode.unfocus();
+                                              focusNode.canRequestFocus = false;
+                                              showEmoji = !showEmoji;
+                                            });
                                           },
-                                          icon: Icon(Icons.attach_file)),
-                                      IconButton(
-                                          onPressed: () {},
-                                          icon: Icon(Icons.camera_alt)),
-                                    ],
+                                        ),
+                                        suffixIcon: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  showModalBottomSheet(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      context: context,
+                                                      builder: (builder) =>
+                                                          bottomSheet());
+                                                },
+                                                icon: Icon(Icons.attach_file)),
+                                            IconButton(
+                                                onPressed: () {},
+                                                icon: Icon(Icons.camera_alt)),
+                                          ],
+                                        ),
+                                        contentPadding: EdgeInsets.all(5)),
                                   ),
-                                  contentPadding: EdgeInsets.all(5)),
-                            ),
+                                ),
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                    right: 2,
+                                    left: 1,
+                                    bottom: 8,
+                                  ),
+                                  child: CircleAvatar(
+                                    backgroundColor: Color(0xFF128C7F),
+                                    radius: 25,
+                                    child: IconButton(
+                                        icon: Icon(
+                                          sendbutton ? Icons.send : Icons.mic,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          if(sendbutton){
+                                            _scrollController.animateTo(_scrollController.position.maxScrollExtent,duration: Duration(milliseconds: 500),curve: Curves.easeOut);
+                                            sendMessage(_controller.text, widget.sourchat.id, widget.chat.id);
+                                             setState(() {
+                                              _controller.clear();
+                                              sendbutton=false;
+                                            });
+                                          }
+                                        }),
+                                  ))
+                            ],
                           ),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(
-                              right: 2,
-                              left: 1,
-                              bottom: 8,
-                            ),
-                            child: CircleAvatar(
-                              backgroundColor: Color(0xFF128C7F),
-                              radius: 25,
-                              child: IconButton(
-                                  icon: Icon(
-                                    sendbutton?Icons.send:
-                                    Icons.mic,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {}),
-                            ))
-                      ],
-                    ),
-                    showEmoji ? emojiSelect() : Container(),
-                  ]),
+                          showEmoji ? emojiSelect() : Container(),
+                        ]),
+                  ),
                 )
               ],
             ),
           ),
         ),
-      ),]
-    );
+      ),
+    ]);
   }
-   Widget bottomSheet() {
+
+  Widget bottomSheet() {
     return Container(
       height: 268,
       width: MediaQuery.of(context).size.width,
@@ -356,7 +401,8 @@ class _IndividualPageState extends State<IndividualPage> {
       ),
     );
   }
-    Widget iconCreation(IconData icons, Color color, String text) {
+
+  Widget iconCreation(IconData icons, Color color, String text) {
     return InkWell(
       onTap: () {},
       child: Column(
