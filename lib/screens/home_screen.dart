@@ -4,8 +4,9 @@ import 'package:whatsappclone/page/camera_page.dart';
 import 'package:whatsappclone/page/chat_page.dart';
 
 class HomeScrenn extends StatefulWidget {
-  const HomeScrenn({Key? key, required this.chatmodels}) : super(key: key);
+   HomeScrenn({Key? key, required this.chatmodels, required this.sourchat }) : super(key: key);
   final List<ChatModel> chatmodels;
+  late ChatModel sourchat;
 
   @override
   State<HomeScrenn> createState() => _HomeScrennState();
@@ -83,6 +84,7 @@ class _HomeScrennState extends State<HomeScrenn>
           CameraPage(),
           ChatPage(
             chatmodels: widget.chatmodels,
+            sourchat: widget.sourchat,
           ),
           Text("Status"),
           Text("Calls"),

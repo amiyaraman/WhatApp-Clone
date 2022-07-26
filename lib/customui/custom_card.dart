@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:whatsappclone/model/chat_model.dart';
+import 'package:whatsappclone/page/chat_page.dart';
 import 'package:whatsappclone/screens/individual_page.dart';
 
 class CustomCard extends StatelessWidget {
-  CustomCard(this.chat, {Key? key}) : super(key: key);
+  CustomCard(this.chat, {Key? key, required this.sourchat}) : super(key: key);
   ChatModel chat;
+  ChatModel sourchat;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class CustomCard extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => IndividualPage(chat: chat)));
+                builder: (context) => IndividualPage(chat: chat,sourchat: sourchat,)));
       },
       child: ListTile(
         leading: CircleAvatar(

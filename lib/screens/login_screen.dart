@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       MaterialPageRoute(
                           builder: (builder) => HomeScrenn(
                                 chatmodels: chatmodels,
-                                //sourchat: sourceChat,
+                                sourchat: sourceChat,
                               )));
                 },
                 child: ButtonCard(

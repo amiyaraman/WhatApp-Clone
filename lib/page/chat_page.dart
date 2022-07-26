@@ -4,8 +4,9 @@ import 'package:whatsappclone/model/chat_model.dart';
 import 'package:whatsappclone/screens/select_contact.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.chatmodels}) : super(key: key);
+  const ChatPage({Key? key, required this.chatmodels, required this.sourchat}) : super(key: key);
   final List<ChatModel> chatmodels;
+  final ChatModel sourchat;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -25,7 +26,8 @@ class _ChatPageState extends State<ChatPage> {
       body: ListView.builder(
         itemCount: widget.chatmodels.length,
         itemBuilder: (context, index) {
-          return CustomCard(widget.chatmodels[index]);
+          return CustomCard(widget.chatmodels[index],
+          sourchat:widget.sourchat);
         },
       ),
     );
